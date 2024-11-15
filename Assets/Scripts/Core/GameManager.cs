@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -53,7 +54,8 @@ public class GameManager : MonoBehaviour
                 waitingCount--;
                 if (waitingCount == 0)
                 {
-                    SetActivePlayer(0);
+                    // Select a random player to start
+                    SetActivePlayer(Random.Range(0, m_playerInteractionHandlers.Count));
                 }
             });
         }

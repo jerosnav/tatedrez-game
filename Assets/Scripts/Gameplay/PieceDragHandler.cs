@@ -77,7 +77,6 @@ namespace AwesomeCompany.Tatedrez.Gameplay
             m_startDragPosition = transform.position;
             transform.position = eventData.position;
             transform.SetAsLastSibling();
-            transform.parent.SetAsLastSibling();
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -87,10 +86,10 @@ namespace AwesomeCompany.Tatedrez.Gameplay
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            SetDraggable(true);
             if (!eventData.used)
             {
                 transform.position = m_startDragPosition;
+                SetDraggable(true);
             }
         }
         

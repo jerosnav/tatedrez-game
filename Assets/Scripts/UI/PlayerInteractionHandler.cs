@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using AwesomeCompany.Tatedrez.Data;
 using AwesomeCompany.Tatedrez.Gameplay;
 using UnityEngine;
@@ -22,7 +23,7 @@ public class PlayerInteractionHandler : MonoBehaviour
     private IEnumerator Start()
     {
         yield return null;
-        GetComponent<LayoutGroup>().enabled = false;
+        GetComponentInChildren<LayoutGroup>().enabled = false;
         GameManager.Instance.RegisterPlayer(this);
         for (int i = 0; i < m_pieces.Length; i++)
         {
@@ -33,9 +34,26 @@ public class PlayerInteractionHandler : MonoBehaviour
 
     public void EnablePlayerControl(bool enableControl)
     {
+        bool allPiecesAreInBoard = m_pieces.All(piece => piece.BoardGrid != null);
+        Debug.Log($"EnablePlayerControl {name} {enableControl}");
         for (int i = 0; i < m_pieces.Length; i++)
         {
-            m_pieces[i].SetDraggable(enableControl);
+            PieceDragHandler piece = m_pieces[i];
+            if (piece.BoardGrid == null) 
+            { // piece is not in the board yet
+                piece.SetDraggable(enableControl);
+                Debug.Log($"Piece {piece.name} Raycast {enableControl}");
+            }
+            else
+            { // piece is in the board
+                piece.SetDraggable(enableControl && allPiecesAreInBoard);
+                Debug.Log($"Piece {piece.name} Raycast {enableControl && allPiecesAreInBoard}");
+            }
+        }
+
+        if (enableControl)
+        {
+            transform.SetAsLastSibling();
         }
     }
 
