@@ -33,7 +33,7 @@ namespace AwesomeCompany.Tatedrez.Helpers
 
         public static bool CanBeMovedTo(BoardGrid boardGrid, Vector2Int gridPosition)
         {
-            return (boardGrid.GetCellElementAt(gridPosition,
+            return (boardGrid.TryGetCellElementAt(gridPosition,
                         out ICellElement cellElement) // grid position inside board 
                     && cellElement == default); // is empty cell
         }

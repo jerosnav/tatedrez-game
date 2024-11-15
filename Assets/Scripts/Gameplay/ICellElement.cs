@@ -6,7 +6,7 @@ namespace AwesomeCompany.Tatedrez.Gameplay
 {
     public interface ICellElement
     {
-        public Vector2Int GridPosition { get; }
-        public BoardGrid BoardGrid { get; }
+        public Vector2Int GridPosition { get; set; }
+        public BoardGrid BoardGrid { get; set; }
     }
 }

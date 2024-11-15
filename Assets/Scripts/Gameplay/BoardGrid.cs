@@ -5,18 +5,22 @@ using UnityEngine;
 
 namespace AwesomeCompany.Tatedrez.Gameplay
 {
-    public class BoardGrid : MonoBehaviour
+    public class BoardGrid
     {
-        [SerializeField] private BoardData m_boardData;
-        [SerializeField] private Vector2Int m_gridSize = new Vector2Int(4, 4);
-
-        [Header("Debug"), Space] [SerializeReference]
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+        
         private ICellElement[] m_cellElements;
         
-        public int Width => m_gridSize.x;
-        public int Height => m_gridSize.y;
+        public BoardGrid(int width, int height)
+        {
+            Width = width;
+            Height = height;
+            m_cellElements = new ICellElement[Width * Height];
+        }
+        
 
-        public bool GetCellElementAt(Vector2Int gridPosition, out ICellElement cellElement)
+        public bool TryGetCellElementAt(Vector2Int gridPosition, out ICellElement cellElement)
         {
             cellElement = default;
             if (!IsValidGridPosition(gridPosition)) return false;
@@ -30,14 +34,23 @@ namespace AwesomeCompany.Tatedrez.Gameplay
                                        && gridPosition.y >= 0 && gridPosition.y < Height;
         }
 
-        public void SetBoardData(BoardData boardData)
+        public bool IsEmpty(Vector2Int gridPosition)
         {
-            m_boardData = boardData;
-            m_gridSize = m_boardData.GridSize;
+            return IsValidGridPosition(gridPosition) &&
+                   m_cellElements[gridPosition.x + gridPosition.y * Width] == default;
+        }
 
-            int size = m_boardData.GridSize.x * m_boardData.GridSize.y;
+        public bool TryPlaceElement(ICellElement cellElement, Vector2Int gridPosition)
+        {
+            if (!IsValidGridPosition(gridPosition)) return false;
+            Debug.Log("Piece on " + gridPosition + ": " + (PieceDragHandler)m_cellElements[gridPosition.x + gridPosition.y * Width], (PieceDragHandler)m_cellElements[gridPosition.x + gridPosition.y * Width]);
+            if (!IsEmpty(gridPosition)) return false;
 
-            m_cellElements = new ICellElement[size];
+            m_cellElements[cellElement.GridPosition.x + cellElement.GridPosition.y * Width] = default;
+            m_cellElements[gridPosition.x + gridPosition.y * Width] = cellElement;
+            cellElement.BoardGrid = this;
+            cellElement.GridPosition = gridPosition;
+            return true;
         }
     }
 }

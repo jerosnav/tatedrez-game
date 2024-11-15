@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using AwesomeCompany.Tatedrez.Data;
+using AwesomeCompany.Tatedrez.Gameplay;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace AwesomeCompany.Tatedrez.UI
@@ -14,7 +16,11 @@ namespace AwesomeCompany.Tatedrez.UI
         [Header("References"), Space] 
         [SerializeField] private GridLayoutGroup m_gridLayoutGroup;
         [SerializeField] private Image m_cellPrefab;
-        [SerializeField] private Image[] m_cellImages;
+        [SerializeField] private UICell[] m_uiCells;
+        
+        private BoardGrid m_boardGrid;
+        
+        public BoardGrid BoardGrid => m_boardGrid;
 
 #if UNITY_EDITOR        
         private void OnValidate()
@@ -26,7 +32,12 @@ namespace AwesomeCompany.Tatedrez.UI
                 UnityEditor.EditorApplication.delayCall += UpdateVisuals;
             }
         }
-#endif        
+#endif
+
+        private void Start()
+        {
+            m_boardGrid = new BoardGrid(m_boardData.GridSize.x, m_boardData.GridSize.y);
+        }
 
         private void OnRectTransformDimensionsChange()
         {
@@ -35,9 +46,9 @@ namespace AwesomeCompany.Tatedrez.UI
 
         public void UpdateVisuals()
         {
-            Debug.Log("Update Visuals", this);
             if (!m_boardData) return;
-
+            if (!m_gridLayoutGroup) return;
+            
             m_gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedRowCount;
             m_gridLayoutGroup.constraintCount = m_boardData.GridSize.x;
 
@@ -56,15 +67,17 @@ namespace AwesomeCompany.Tatedrez.UI
                 m_gridLayoutGroup.transform.GetChild(i).gameObject.SetActive(i < size);
             }
 
-            m_cellImages = m_gridLayoutGroup.GetComponentsInChildren<Image>();
+            m_uiCells = m_gridLayoutGroup.GetComponentsInChildren<UICell>();
 
             int boardWidth = m_boardData.GridSize.x;
-            for (int i = 0; i < m_cellImages.Length; i++)
+            for (int i = 0; i < m_uiCells.Length; i++)
             {
                 int row = i / boardWidth;
                 int col = i % boardWidth;
                 bool check = (row + col) % 2 == 0;
-                m_cellImages[i].color = check ? m_boardData.DarkColor : m_boardData.LightColor;
+                Color color = check ? m_boardData.DarkColor : m_boardData.LightColor;
+                Vector2Int gridPosition = new Vector2Int(row, col);
+                m_uiCells[i].Setup(this, gridPosition, color);
             }
         }
     }

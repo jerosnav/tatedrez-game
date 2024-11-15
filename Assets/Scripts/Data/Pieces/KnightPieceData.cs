@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace AwesomeCompany.Tatedrez.Data
 {
+    [CreateAssetMenu(menuName = "Game/Data/Piece/Knight", fileName = "Knight", order = 1)]
     public class KnightPieceData : PieceData
     {
         private static readonly Vector2Int[] s_checkPositions = new Vector2Int[]

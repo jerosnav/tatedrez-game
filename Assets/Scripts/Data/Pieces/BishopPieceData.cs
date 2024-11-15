@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace AwesomeCompany.Tatedrez.Data
 {
+    [CreateAssetMenu(menuName = "Game/Data/Piece/Bishop", fileName = "Bishop", order = 1)]
     public class BishopPieceData : PieceData
     {
         public override void PopulateWithValidMoves(BoardGrid boardGrid, Vector2Int gridPosition,

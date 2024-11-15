@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4590456636864426715}
   - component: {fileID: 8833026239520697725}
+  - component: {fileID: 5787674130382531995}
   m_Layer: 5
-  m_Name: Player Pieces Widget
+  m_Name: Player 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65,6 +66,19 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &5787674130382531995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1810957255707210771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38ace72e110077047838f671034223c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_playerColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &3021744108070547206
 GameObject:
   m_ObjectHideFlags: 0
@@ -76,6 +90,7 @@ GameObject:
   - component: {fileID: 4685278685676251991}
   - component: {fileID: 5147201868270459808}
   - component: {fileID: 7724284687115718237}
+  - component: {fileID: 6925667507979245840}
   m_Layer: 5
   m_Name: Knight
   m_TagString: Untagged
@@ -130,7 +145,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -2129095946, guid: e11b19394e4d2ad4da3e903f4438020c, type: 3}
+  m_Sprite: {fileID: -810047788, guid: 0acce5ebc8187d444bf7e2d9cc859bb4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -140,6 +155,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6925667507979245840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3021744108070547206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f221907b0adb4774a5936b84115a28d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_pieceData: {fileID: 11400000, guid: d39bb8c170ee932409ca69329192864a, type: 2}
+  m_shape: {fileID: 7724284687115718237}
 --- !u!1 &3569831129233915888
 GameObject:
   m_ObjectHideFlags: 0
@@ -151,6 +180,7 @@ GameObject:
   - component: {fileID: 7840758638971370072}
   - component: {fileID: 4623782741164883949}
   - component: {fileID: 3326361681136535476}
+  - component: {fileID: 9074011676973919978}
   m_Layer: 5
   m_Name: Bishop
   m_TagString: Untagged
@@ -205,7 +235,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -540917187, guid: e11b19394e4d2ad4da3e903f4438020c, type: 3}
+  m_Sprite: {fileID: -252065820, guid: 0acce5ebc8187d444bf7e2d9cc859bb4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -215,6 +245,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &9074011676973919978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3569831129233915888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f221907b0adb4774a5936b84115a28d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_pieceData: {fileID: 11400000, guid: b7ff0ee909dbef74bb56cc073b4713f0, type: 2}
+  m_shape: {fileID: 3326361681136535476}
 --- !u!1 &6477765819461186044
 GameObject:
   m_ObjectHideFlags: 0
@@ -226,6 +270,7 @@ GameObject:
   - component: {fileID: 8994853107402213340}
   - component: {fileID: 7294688389570761850}
   - component: {fileID: 2456737124746551070}
+  - component: {fileID: 5421727319252339768}
   m_Layer: 5
   m_Name: Rook
   m_TagString: Untagged
@@ -280,7 +325,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 849633085, guid: e11b19394e4d2ad4da3e903f4438020c, type: 3}
+  m_Sprite: {fileID: 1151068983, guid: 0acce5ebc8187d444bf7e2d9cc859bb4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -290,3 +335,17 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5421727319252339768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6477765819461186044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f221907b0adb4774a5936b84115a28d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_pieceData: {fileID: 11400000, guid: 282aa06e1c7679046997c1d1dd060d89, type: 2}
+  m_shape: {fileID: 2456737124746551070}
