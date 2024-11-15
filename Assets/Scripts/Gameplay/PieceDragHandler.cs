@@ -14,18 +14,17 @@ namespace AwesomeCompany.Tatedrez.Gameplay
         [Header("References")] 
         [SerializeField] private Image m_shape;
         
-        public Vector2Int GridPosition { get; set; }
         public BoardGrid BoardGrid { get; set; }
-        
+        public Vector2Int GridPosition { get; set; }
 
-        private Graphic m_graphic;
         private Vector3 m_startDragPosition;
         private Vector3 m_restartPosition;
+        private Vector2Int m_gridPosition;
+        private List<Vector2Int> m_validPositions = new List<Vector2Int>();
         private bool m_isMoving;
 
         private void Awake()
         {
-            m_graphic = GetComponent<Graphic>();
             UpdateVisuals();
         }
         
@@ -40,9 +39,26 @@ namespace AwesomeCompany.Tatedrez.Gameplay
             UpdateVisuals();
         }
         
+        public void UpdateVisuals()
+        {
+            if (!m_pieceData) return;
+            if (!m_shape) m_shape = GetComponentInChildren<Image>();
+            m_shape.sprite = m_pieceData.Shape;
+        }
+        
+        public void SetColor(Color color)
+        {
+            m_shape.color = color;
+        }
+        
+        public bool IsValidPosition(Vector2Int gridPosition)
+        {
+            return BoardGrid == null || m_validPositions.Contains(gridPosition);
+        }
+        
         public void SetDraggable(bool isDraggable)
         {
-            m_graphic.raycastTarget = isDraggable;
+            m_shape.raycastTarget = isDraggable;
         }
         
         public void SetRestartPosition()
@@ -58,21 +74,10 @@ namespace AwesomeCompany.Tatedrez.Gameplay
             BoardGrid = null;
             StartCoroutine(MoveToResetPositionCo(onFinished));
         }
-
-        public void UpdateVisuals()
-        {
-            if (!m_pieceData) return;
-            if (!m_shape) m_shape = GetComponentInChildren<Image>();
-            m_shape.sprite = m_pieceData.Shape;
-        }
-
-        public void PopulateWithValidMoves(BoardGrid boardGrid, Vector2Int gridPosition, List<Vector2Int> validMoves)
-        {
-            m_pieceData.PopulateWithValidMoves(boardGrid, gridPosition, validMoves);
-        }
         
         public void OnBeginDrag(PointerEventData eventData)
         {
+            UpdateValidPositions();
             SetDraggable(false);
             m_startDragPosition = transform.position;
             transform.position = eventData.position;
@@ -90,6 +95,15 @@ namespace AwesomeCompany.Tatedrez.Gameplay
             {
                 transform.position = m_startDragPosition;
                 SetDraggable(true);
+            }
+        }
+
+        private void UpdateValidPositions()
+        {
+            m_validPositions.Clear();
+            if (BoardGrid != null)
+            {
+                m_pieceData.PopulateWithValidMoves(BoardGrid, GridPosition, m_validPositions);
             }
         }
         

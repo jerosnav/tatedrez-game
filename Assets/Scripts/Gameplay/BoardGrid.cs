@@ -43,8 +43,8 @@ namespace AwesomeCompany.Tatedrez.Gameplay
         public bool TryPlaceElement(ICellElement cellElement, Vector2Int gridPosition)
         {
             if (!IsValidGridPosition(gridPosition)) return false;
-            Debug.Log("Piece on " + gridPosition + ": " + (PieceDragHandler)m_cellElements[gridPosition.x + gridPosition.y * Width], (PieceDragHandler)m_cellElements[gridPosition.x + gridPosition.y * Width]);
             if (!IsEmpty(gridPosition)) return false;
+            if (!cellElement.IsValidPosition(gridPosition)) return false;
 
             m_cellElements[cellElement.GridPosition.x + cellElement.GridPosition.y * Width] = default;
             m_cellElements[gridPosition.x + gridPosition.y * Width] = cellElement;

@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f28734531b3a84b9090ba8474461b25c, type: 3}
+  m_Name: Rook Grey
+  m_EditorClassIdentifier: 
+  m_shape: {fileID: 849633085, guid: e11b19394e4d2ad4da3e903f4438020c, type: 3}

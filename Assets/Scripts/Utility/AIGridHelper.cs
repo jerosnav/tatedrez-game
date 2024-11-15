@@ -14,7 +14,7 @@ namespace AwesomeCompany.Tatedrez.Helpers
             while (CanBeMovedTo(boardGrid, gridPosition))
             {
                 validMoves.Add(gridPosition);
-                gridPosition = startPosition + direction;
+                gridPosition += direction;
             }
         }
         

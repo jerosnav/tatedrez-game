@@ -8,5 +8,6 @@ namespace AwesomeCompany.Tatedrez.Gameplay
     {
         public Vector2Int GridPosition { get; set; }
         public BoardGrid BoardGrid { get; set; }
+        public bool IsValidPosition(Vector2Int gridPosition);
     }
 }
