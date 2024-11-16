@@ -1,10 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using AwesomeCompany.Tatedrez.Core;
 using AwesomeCompany.Tatedrez.Data;
+using AwesomeCompany.Tatedrez.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace AwesomeCompany.Tatedrez.Gameplay
 {
@@ -13,13 +17,16 @@ namespace AwesomeCompany.Tatedrez.Gameplay
         [SerializeField] private PieceData m_pieceData;
         [Header("References")] 
         [SerializeField] private Image m_shape;
-        
+
+        public PieceData PieceData => m_pieceData;
         public BoardGrid BoardGrid { get; set; }
         public Vector2Int GridPosition { get; set; }
+        public Object Value => m_playerData;
 
         private Vector3 m_startDragPosition;
         private Vector3 m_restartPosition;
         private Vector2Int m_gridPosition;
+        private PlayerData m_playerData;
         private List<Vector2Int> m_validPositions = new List<Vector2Int>();
         private bool m_isMoving;
 
@@ -53,9 +60,10 @@ namespace AwesomeCompany.Tatedrez.Gameplay
         
         public bool IsValidPosition(Vector2Int gridPosition)
         {
-            return BoardGrid == null || m_validPositions.Contains(gridPosition);
+            return BoardGrid == null || m_validPositions.Count == 0 || m_validPositions.Contains(gridPosition);
         }
-        
+
+
         public void SetDraggable(bool isDraggable)
         {
             m_shape.raycastTarget = isDraggable;
@@ -66,13 +74,41 @@ namespace AwesomeCompany.Tatedrez.Gameplay
             m_restartPosition = transform.position;
         }
 
-        public void MoveToRestartPosition(Action onFinished = null)
+        public bool MoveToRestartPosition(Action onFinished = null)
         {
-            if (m_isMoving) return;
-            m_isMoving = true;
-            GridPosition = default;
-            BoardGrid = null;
-            StartCoroutine(MoveToResetPositionCo(onFinished));
+            if (MoveTo(m_restartPosition, onFinished))
+            {
+                GridPosition = default;
+                BoardGrid = null;
+            }
+            return false;
+        }
+        
+        public bool MoveTo(BoardGrid boardGrid, Vector2Int gridPosition, Action onFinished = null)
+        {
+            if(boardGrid.CanPlaceElement(this, gridPosition))
+            {
+                BoardGrid = boardGrid;
+                UICell uiCell = FindObjectsOfType<UICell>().FirstOrDefault(o => o.GridPositions == gridPosition);
+                if (uiCell)
+                {
+                    return MoveTo(uiCell.transform.position, () =>
+                    {
+                        BoardGrid.TryPlaceElement(this, gridPosition);
+                        Debug.Log(this + " " + GridPosition);
+                        onFinished?.Invoke();
+                    });
+                }
+            }
+
+            return false;
+        }
+
+        public bool MoveTo(Vector3 position, Action onFinished)
+        {
+            if (m_isMoving) return false;
+            StartCoroutine(MoveToPositionCo(position, onFinished));
+            return true;
         }
         
         public void OnBeginDrag(PointerEventData eventData)
@@ -107,18 +143,24 @@ namespace AwesomeCompany.Tatedrez.Gameplay
             }
         }
         
-        private IEnumerator MoveToResetPositionCo(Action onFinished)
+        private IEnumerator MoveToPositionCo(Vector3 position, Action onFinished)
         {
             float dist;
             do
             {
-                transform.position = Vector3.Lerp(transform.position, m_restartPosition, Time.deltaTime);
-                dist = Vector3.Distance(transform.position, m_restartPosition);
+                transform.position = Vector3.Lerp(transform.position, position, Time.fixedDeltaTime * 5f);
+                dist = Vector3.Distance(transform.position, position);
                 yield return null;
-            } while (!Mathf.Approximately(dist, 0f) );
+            } while (dist > 0.01f);
+            transform.position = position;
 
             m_isMoving = false;
             onFinished?.Invoke();
+        }
+
+        public void SetPlayerData(PlayerData playerData)
+        {
+            m_playerData = playerData;
         }
     }
 }

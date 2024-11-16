@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace AwesomeCompany.Tatedrez.UI
 {
-    public class BoardWidget : MonoBehaviour
+    public class UIBoardWidget : MonoBehaviour
     {
         [SerializeField] private BoardData m_boardData;
 
@@ -17,10 +17,6 @@ namespace AwesomeCompany.Tatedrez.UI
         [SerializeField] private GridLayoutGroup m_gridLayoutGroup;
         [SerializeField] private Image m_cellPrefab;
         [SerializeField] private UICell[] m_uiCells;
-        
-        private BoardGrid m_boardGrid;
-        
-        public BoardGrid BoardGrid => m_boardGrid;
 
 #if UNITY_EDITOR        
         private void OnValidate()
@@ -33,11 +29,6 @@ namespace AwesomeCompany.Tatedrez.UI
             }
         }
 #endif
-
-        private void Start()
-        {
-            m_boardGrid = new BoardGrid(m_boardData.GridSize.x, m_boardData.GridSize.y);
-        }
 
         private void OnRectTransformDimensionsChange()
         {
@@ -72,8 +63,8 @@ namespace AwesomeCompany.Tatedrez.UI
             int boardWidth = m_boardData.GridSize.x;
             for (int i = 0; i < m_uiCells.Length; i++)
             {
-                int row = i / boardWidth;
-                int col = i % boardWidth;
+                int row = i % boardWidth;
+                int col = i / boardWidth;
                 bool check = (row + col) % 2 == 0;
                 Color color = check ? m_boardData.DarkColor : m_boardData.LightColor;
                 Vector2Int gridPosition = new Vector2Int(row, col);

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using AwesomeCompany.Tatedrez.Core;
 using AwesomeCompany.Tatedrez.Gameplay;
 using AwesomeCompany.Tatedrez.Helpers;
 using UnityEngine;
@@ -25,7 +26,7 @@ namespace AwesomeCompany.Tatedrez.Data
             List<Vector2Int> validMoves)
         {
             
-            AIGridHelper.PopulateWithPositions(boardGrid, gridPosition, s_checkPositions, validMoves);
+            AIGridHelper.PopulateWithValidPositionsWithPositionArray(boardGrid, gridPosition, s_checkPositions, validMoves);
         }
     }
 }

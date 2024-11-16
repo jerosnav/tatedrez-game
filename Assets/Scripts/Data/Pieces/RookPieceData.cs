@@ -1,6 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using AwesomeCompany.Tatedrez.Gameplay;
+using AwesomeCompany.Tatedrez.Core;
 using AwesomeCompany.Tatedrez.Helpers;
 using UnityEngine;
 
@@ -12,10 +11,10 @@ namespace AwesomeCompany.Tatedrez.Data
         public override void PopulateWithValidMoves(BoardGrid boardGrid, Vector2Int gridPosition,
             List<Vector2Int> validMoves)
         {
-            AIGridHelper.PopulateWithLinearDirection(boardGrid, gridPosition, Vector2Int.right, validMoves);
-            AIGridHelper.PopulateWithLinearDirection(boardGrid, gridPosition, Vector2Int.down, validMoves);
-            AIGridHelper.PopulateWithLinearDirection(boardGrid, gridPosition, Vector2Int.left, validMoves);
-            AIGridHelper.PopulateWithLinearDirection(boardGrid, gridPosition, Vector2Int.up, validMoves);
+            AIGridHelper.PopulateWithValidPositionsWithLinearDirection(boardGrid, gridPosition, Vector2Int.right, validMoves);
+            AIGridHelper.PopulateWithValidPositionsWithLinearDirection(boardGrid, gridPosition, Vector2Int.down, validMoves);
+            AIGridHelper.PopulateWithValidPositionsWithLinearDirection(boardGrid, gridPosition, Vector2Int.left, validMoves);
+            AIGridHelper.PopulateWithValidPositionsWithLinearDirection(boardGrid, gridPosition, Vector2Int.up, validMoves);
         }
 
         

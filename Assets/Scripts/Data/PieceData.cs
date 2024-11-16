@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using AwesomeCompany.Tatedrez.Gameplay;
+using AwesomeCompany.Tatedrez.Core;
 using UnityEngine;
 
 namespace AwesomeCompany.Tatedrez.Data
