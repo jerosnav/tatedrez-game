@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using AwesomeCompany.Tatedrez.Core;
 using AwesomeCompany.Tatedrez.Data;
 using AwesomeCompany.Tatedrez.GridSystem;
@@ -21,6 +22,16 @@ namespace AwesomeCompany.Tatedrez.Gameplay
         private Vector3 m_startDragPosition;
         private Vector3 m_restartPosition;
         private bool m_isMoving;
+        public bool IsPlacedOnBoard => GameManager.Instance.BoardController.IsPieceOnBoard(this);
+
+        public Vector2Int GridPosition
+        {
+            get
+            {
+                GameManager.Instance.BoardController.TryGetGridPosition(this, out Vector2Int gridPosition);
+                return gridPosition;
+            }
+        }
 
         private void Awake()
         {
@@ -36,6 +47,11 @@ namespace AwesomeCompany.Tatedrez.Gameplay
         {
             m_pieceData = pieceData;
             UpdateVisuals();
+        }
+        
+        public void SetPlayerData(PlayerData playerData)
+        {
+            m_playerData = playerData;
         }
         
         public void UpdateVisuals()
@@ -63,24 +79,18 @@ namespace AwesomeCompany.Tatedrez.Gameplay
 
         public bool MoveToRestartPosition(Action onFinished = null)
         {
-            if (MoveTo(m_restartPosition, onFinished))
-            {
-                m_boardController = default;
-            }
-            return false;
+            return MoveTo(m_restartPosition, onFinished);
         }
         
         public bool MoveTo(BoardController boardController, Vector2Int gridPosition, Action onFinished = null)
         {
             if(boardController.CanPlacePiece(this, gridPosition))
             {
-                m_boardController = boardController;
-                BoardCell boardCell = FindObjectsOfType<BoardCell>().FirstOrDefault(o => o.GridPositions == gridPosition);
-                if (boardCell)
+                if (boardController.TryGetWorldPosition(gridPosition, out Vector3 worldPosition))
                 {
-                    return MoveTo(boardCell.transform.position, () =>
+                    return MoveTo(worldPosition, () =>
                     {
-                        m_boardController.TryToPlacePiece(this, gridPosition);
+                        boardController.TryToPlacePiece(this, gridPosition);
                         onFinished?.Invoke();
                     });
                 }
@@ -98,7 +108,6 @@ namespace AwesomeCompany.Tatedrez.Gameplay
         
         public void OnBeginDrag(PointerEventData eventData)
         {
-            UpdateValidPositions();
             SetDraggable(false);
             m_startDragPosition = transform.position;
             transform.position = eventData.position;
@@ -118,15 +127,6 @@ namespace AwesomeCompany.Tatedrez.Gameplay
                 SetDraggable(true);
             }
         }
-
-        private void UpdateValidPositions()
-        {
-            m_reusableValidPositions.Clear();
-            if (m_boardController != null)
-            {
-                m_pieceData.PopulateWithValidMoves(m_boardController, GridPosition, m_reusableValidPositions);
-            }
-        }
         
         private IEnumerator MoveToPositionCo(Vector3 position, Action onFinished)
         {
@@ -141,11 +141,6 @@ namespace AwesomeCompany.Tatedrez.Gameplay
 
             m_isMoving = false;
             onFinished?.Invoke();
-        }
-
-        public void SetPlayerData(PlayerData playerData)
-        {
-            m_playerData = playerData;
         }
     }
 }

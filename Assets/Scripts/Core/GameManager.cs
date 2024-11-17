@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using AwesomeCompany.Tatedrez.Data;
 using AwesomeCompany.Tatedrez.Gameplay;
 using AwesomeCompany.Tatedrez.Helpers;
@@ -49,6 +50,7 @@ namespace AwesomeCompany.Tatedrez.Core
 
         private void BoardGridOnOnBoardUpdatedEvent(BoardController boardController)
         {
+            boardController.DebugBoardData();
             if ( boardController.CheckWinCondition(out PlayerData winner))
             {
                 OnPlayerWin?.Invoke(winner);
@@ -155,12 +157,17 @@ namespace AwesomeCompany.Tatedrez.Core
                 .SelectMany(kvp =>
                     kvp.Value.Select(move => new KeyValuePair<PieceDragHandler, Vector2Int>(kvp.Key, move))));
 
-            Debug.Log("flatten " + m_reusableFlattenPossibleMovesByPiece.Count);
+            Debug.Log("---- All Possible Bot Moves ----");
             foreach (var kvp in m_reusablePossibleMovesDic)
             {
-                Debug.Log(kvp.Key + " " + kvp.Value.Count);
+                StringBuilder sb = new StringBuilder(kvp.Key.Data.name + ": ");
+                foreach (var pos in kvp.Value)
+                {
+                    sb.Append(pos + ", ");
+                }
+                Debug.Log(sb.ToString());
             }
-            
+
             // Check if no movement is possible and in that case ends with a tie.
             if (m_reusableFlattenPossibleMovesByPiece.Count == 0)
             {

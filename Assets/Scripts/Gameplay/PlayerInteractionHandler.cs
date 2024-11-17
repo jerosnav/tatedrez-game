@@ -58,7 +58,7 @@ namespace AwesomeCompany.Tatedrez.Gameplay
 
         public void EnablePlayerControl(bool enableControl)
         {
-            if (m_playerData.BotAlgorithm) return;
+            if (m_playerData.BotAlgorithm && enableControl) return;
             
             bool allPiecesAreOnBoard = AllPiecesOnBoard();
             for (int i = 0; i < m_pieces.Length; i++)

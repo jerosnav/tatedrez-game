@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f4d903130efb448c8cd4ee4d241ed28, type: 3}
-  m_Name: Bishop Grey
+  m_Script: {fileID: 11500000, guid: e686d590768804f70a1b967b5c725929, type: 3}
+  m_Name: Knight
   m_EditorClassIdentifier: 
-  m_shape: {fileID: -540917187, guid: e11b19394e4d2ad4da3e903f4438020c, type: 3}
+  m_shape: {fileID: -2129095946, guid: e11b19394e4d2ad4da3e903f4438020c, type: 3}

@@ -5,20 +5,20 @@ using UnityEngine;
 
 namespace AwesomeCompany.Tatedrez.GridSystem
 {
-    public class CellGrid
+    public class CellGrid<TCellValue>
     {
-        public event Action<CellGrid> OnBoardUpdatedEvent; 
+        public event Action<CellGrid<TCellValue>> OnBoardUpdatedEvent; 
         public int Width { get; private set; }
         public int Height { get; private set; }
-        public IEnumerable<ICellElement> CellElements => m_cellElements;
+        public IEnumerable<ICellElement<TCellValue>> CellElements => m_cellElements;
         
-        private ICellElement[] m_cellElements;
+        private ICellElement<TCellValue>[] m_cellElements;
         
         public CellGrid(int width, int height)
         {
             Width = width;
             Height = height;
-            m_cellElements = new ICellElement[Width * Height];
+            m_cellElements = new ICellElement<TCellValue>[Width * Height];
         }
 
         public void ClearGrid()
@@ -30,7 +30,7 @@ namespace AwesomeCompany.Tatedrez.GridSystem
             OnBoardUpdatedEvent?.Invoke(this);
         }
 
-        public bool TryGetCellElementAt(Vector2Int gridPosition, out ICellElement cellElement)
+        public bool TryGetCellElementAt(Vector2Int gridPosition, out ICellElement<TCellValue> cellElement)
         {
             cellElement = default;
             if (!IsValidGridPosition(gridPosition)) return false;
@@ -50,7 +50,7 @@ namespace AwesomeCompany.Tatedrez.GridSystem
                    m_cellElements[gridPosition.x + gridPosition.y * Width] == default;
         }
 
-        public bool TryPlaceElement(ICellElement cellElement, Vector2Int gridPosition)
+        public bool TryPlaceElement(ICellElement<TCellValue> cellElement, Vector2Int gridPosition)
         {
             if (!CanPlaceElement(cellElement, gridPosition)) return false;
 
@@ -69,12 +69,11 @@ namespace AwesomeCompany.Tatedrez.GridSystem
             return true;
         }
         
-        public bool CanPlaceElement(ICellElement cellElement, Vector2Int gridPosition)
+        public bool CanPlaceElement(ICellElement<TCellValue> cellElement, Vector2Int gridPosition)
         {
-            if(cellElement == default) return false;
             if (!IsValidGridPosition(gridPosition)) return false;
             if (!IsEmpty(gridPosition)) return false;
-            if (!cellElement.IsValidPosition(gridPosition)) return false;
+            if (cellElement != null && !cellElement.IsValidPosition(gridPosition)) return false;
             
             return true;
         }

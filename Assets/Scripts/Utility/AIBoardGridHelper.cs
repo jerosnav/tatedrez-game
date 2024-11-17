@@ -83,7 +83,7 @@ namespace AwesomeCompany.Tatedrez.Helpers
             {
                 return false;
             }
-            Piece valueToCheck = piece.Value as Piece;
+            PlayerData valueToCheck = piece.Owner;
             if (!valueToCheck)
             {
                 return false;
@@ -92,14 +92,14 @@ namespace AwesomeCompany.Tatedrez.Helpers
             gridPosition += stepIncrement;
             while (boardController.TryGetPieceAt(gridPosition, out piece))
             {
-                if (!piece || piece != valueToCheck)
+                if (!piece || piece.Owner != valueToCheck)
                 {
                     return false;
                 }
                 gridPosition += stepIncrement;
             }
 
-            winner = valueToCheck.Owner;
+            winner = valueToCheck;
             return true;
         }
     }

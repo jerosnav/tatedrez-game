@@ -15,7 +15,7 @@ namespace AwesomeCompany.Tatedrez. Core
         [SerializeField] private Image m_image;
         [SerializeField] private BoardController m_boardController;
 
-        public Vector2Int GridPositions => m_gridPosition;
+        public Vector2Int GridPosition => m_gridPosition;
 
         public void Setup(BoardController boardController, Vector2Int gridPosition, Color color)
         {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using AwesomeCompany.Tatedrez.Data;
 using AwesomeCompany.Tatedrez.Gameplay;
 using AwesomeCompany.Tatedrez.GridSystem;
@@ -23,7 +24,7 @@ namespace AwesomeCompany.Tatedrez.Core
         [SerializeField] private BoardCell[] m_uiCells;
         
 
-        private CellGrid m_cellGrid;
+        private CellGrid<Piece> m_cellGrid;
         private HashSet<PieceCellElement> m_cellElementOnBoard = new HashSet<PieceCellElement>();
 
         public int Width => m_cellGrid.Width;
@@ -43,7 +44,7 @@ namespace AwesomeCompany.Tatedrez.Core
 
         private void Awake()
         {
-            m_cellGrid = new CellGrid(m_boardData.Width, m_boardData.Height);
+            m_cellGrid = new CellGrid<Piece>(m_boardData.Width, m_boardData.Height);
             m_cellGrid.OnBoardUpdatedEvent += (_) => OnBoardUpdatedEvent?.Invoke(this);
         }
 
@@ -57,6 +58,11 @@ namespace AwesomeCompany.Tatedrez.Core
             m_cellElementOnBoard.Clear();
             m_cellGrid.ClearGrid();
         }
+        
+        public bool IsPieceOnBoard(Piece piece)
+        {
+            return m_cellElementOnBoard.Any(o => o.Value == piece);
+        }
 
         public bool IsEmptyPosition(Vector2Int gridPosition)
         {
@@ -66,8 +72,8 @@ namespace AwesomeCompany.Tatedrez.Core
         public bool TryGetPieceAt(Vector2Int gridPosition, out Piece piece)
         {
             piece = null;
-            if (!m_cellGrid.TryGetCellElementAt(gridPosition, out ICellElement cellElement)) return false;
-            piece = ((PieceCellElement)cellElement)?.Piece;
+            if (!m_cellGrid.TryGetCellElementAt(gridPosition, out ICellElement<Piece> cellElement)) return false;
+            piece = ((PieceCellElement)cellElement)?.Value;
             return true;
         }
 
@@ -77,15 +83,41 @@ namespace AwesomeCompany.Tatedrez.Core
             return m_cellGrid.TryPlaceElement(pieceCellElement, gridPosition);
         }
 
+        public bool TryGetGridPosition(Piece piece, out Vector2Int gridPosition)
+        {
+            var pieceCellElement = m_cellElementOnBoard.FirstOrDefault(o => o.Value == piece);
+            if (pieceCellElement != null)
+            {
+                gridPosition = pieceCellElement.GridPosition;
+                return true;
+            }
+
+            gridPosition = default;
+            return false;
+        }
+        
+        public bool TryGetWorldPosition(Vector2Int gridPosition, out Vector3 worldPosition)
+        {
+            var cell = m_uiCells.FirstOrDefault(cell => cell.GridPosition == gridPosition);
+            if (cell)
+            {
+                worldPosition = cell.transform.position;
+                return true;
+            }
+
+            worldPosition = default;
+            return false;
+        }
+
         public bool CanPlacePiece(Piece piece, Vector2Int gridPosition)
         {
-            var cellElement = m_cellElementOnBoard.FirstOrDefault(o => o.Piece == piece);
-            return cellElement != default && m_cellGrid.CanPlaceElement(cellElement, gridPosition);
+            var cellElement = m_cellElementOnBoard.FirstOrDefault(o => o.Value == piece);
+            return m_cellGrid.CanPlaceElement(cellElement, gridPosition);
         }
 
         private PieceCellElement GetOrCreateCellElement(Piece piece)
         {
-            var pieceCellElement =  m_cellElementOnBoard.FirstOrDefault(o => o.Piece == piece);
+            var pieceCellElement =  m_cellElementOnBoard.FirstOrDefault(o => o.Value == piece);
             if (pieceCellElement != null) return pieceCellElement;
 
             pieceCellElement = new PieceCellElement(piece, this);
@@ -134,33 +166,59 @@ namespace AwesomeCompany.Tatedrez.Core
                 m_uiCells[i].Setup(this, gridPosition, color);
             }
         }
+
+        public void DebugBoardData()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int y = 0; y < m_cellGrid.Height; y++)
+            {
+                for (int x = 0; x < m_cellGrid.Width; x++)
+                {
+                    if(TryGetPieceAt(new Vector2Int(x, y), out Piece piece) && piece)
+                    {
+                        sb.Append(piece.Data.name + " " + piece.Owner.PlayerName + ", ");
+                    }
+                    else
+                    {
+                        sb.Append("<empty>, ");
+                    }
+                }
+                sb.AppendLine("");
+            }
+            Debug.Log(sb.ToString());
+        }
         
-        private class PieceCellElement : ICellElement
+        private class PieceCellElement : ICellElement<Piece>
         {
             public Vector2Int GridPosition { get; set; }
-            public CellGrid CellGrid { get; set; }
+            public CellGrid<Piece> CellGrid { get; set; }
+            public Piece Value { get; }
+            
+            public PieceCellElement(Piece piece, BoardController boardController)
+            {
+                Value = piece;
+                m_boardController = boardController;
+            }
+
+            private BoardController m_boardController;
+            private List<Vector2Int> m_reusableValidPositions = new List<Vector2Int>();
+            
             public bool IsValidPosition(Vector2Int gridPosition)
             {
                 // If cell grid is null, the piece is still to be placed on board, so any free position is valid
                 if (CellGrid == null) return true;
             
                 // Populate with all the valid moves for the current piece data assigned
-                Piece.Data.PopulateWithValidMoves(m_boardController, GridPosition, m_reusableValidPositions);
-                return m_reusableValidPositions.Count == 0 || m_reusableValidPositions.Contains(gridPosition);
+                m_reusableValidPositions.Clear();
+                Value.Data.PopulateWithValidMoves(m_boardController, GridPosition, m_reusableValidPositions);
+                StringBuilder sb = new StringBuilder(Value.name);
+                foreach (var validPosition in m_reusableValidPositions)
+                {
+                    sb.Append(validPosition + ", ");
+                }
+                Debug.Log(sb.ToString());
+                return m_reusableValidPositions.Contains(gridPosition);
             }
-
-            public Object Value { get; }
-            public Piece Piece => Value as Piece;
-
-            private BoardController m_boardController;
-
-            public PieceCellElement(Piece piece, BoardController boardController)
-            {
-                Value = piece;
-                m_boardController = boardController;
-            }
-            
-            private List<Vector2Int> m_reusableValidPositions = new List<Vector2Int>();
         }
     }
 }
