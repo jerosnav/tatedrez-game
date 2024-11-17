@@ -3,25 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AwesomeCompany.Tatedrez.Core
+namespace AwesomeCompany.Tatedrez.GridSystem
 {
-    public class BoardGrid
+    public class CellGrid
     {
-        public event Action<BoardGrid> OnBoardUpdatedEvent; 
+        public event Action<CellGrid> OnBoardUpdatedEvent; 
         public int Width { get; private set; }
         public int Height { get; private set; }
         public IEnumerable<ICellElement> CellElements => m_cellElements;
         
         private ICellElement[] m_cellElements;
         
-        public BoardGrid(int width, int height)
+        public CellGrid(int width, int height)
         {
             Width = width;
             Height = height;
             m_cellElements = new ICellElement[Width * Height];
         }
 
-        public void ClearBoard()
+        public void ClearGrid()
         {
             for (int i = 0; i < m_cellElements.Length; i++)
             {
@@ -54,9 +54,9 @@ namespace AwesomeCompany.Tatedrez.Core
         {
             if (!CanPlaceElement(cellElement, gridPosition)) return false;
 
-            if (cellElement.BoardGrid != this)
+            if (cellElement.CellGrid != this)
             {
-                cellElement.BoardGrid = this;
+                cellElement.CellGrid = this;
             }
             else
             {
@@ -71,6 +71,7 @@ namespace AwesomeCompany.Tatedrez.Core
         
         public bool CanPlaceElement(ICellElement cellElement, Vector2Int gridPosition)
         {
+            if(cellElement == default) return false;
             if (!IsValidGridPosition(gridPosition)) return false;
             if (!IsEmpty(gridPosition)) return false;
             if (!cellElement.IsValidPosition(gridPosition)) return false;

@@ -12,6 +12,8 @@ namespace AwesomeCompany.Tatedrez.Data
         [SerializeField] private Color m_darkColor = new Color(0.6f, 0.6f, 0f, 1f);
 
         public Vector2Int GridSize => m_gridSize;
+        public int Width => m_gridSize.x;
+        public int Height => m_gridSize.y;
         public Color LightColor => m_lightColor;
         public Color DarkColor => m_darkColor;
     }

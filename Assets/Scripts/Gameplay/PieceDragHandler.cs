@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AwesomeCompany.Tatedrez.Core;
 using AwesomeCompany.Tatedrez.Data;
+using AwesomeCompany.Tatedrez.GridSystem;
 using AwesomeCompany.Tatedrez.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -12,22 +13,13 @@ using Object = UnityEngine.Object;
 
 namespace AwesomeCompany.Tatedrez.Gameplay
 {
-    public class PieceDragHandler : MonoBehaviour, ICellElement, IDragHandler, IBeginDragHandler, IEndDragHandler
+    public class PieceDragHandler : Piece, IDragHandler, IBeginDragHandler, IEndDragHandler
     {
-        [SerializeField] private PieceData m_pieceData;
         [Header("References")] 
         [SerializeField] private Image m_shape;
-
-        public PieceData PieceData => m_pieceData;
-        public BoardGrid BoardGrid { get; set; }
-        public Vector2Int GridPosition { get; set; }
-        public Object Value => m_playerData;
-
+        
         private Vector3 m_startDragPosition;
         private Vector3 m_restartPosition;
-        private Vector2Int m_gridPosition;
-        private PlayerData m_playerData;
-        private List<Vector2Int> m_validPositions = new List<Vector2Int>();
         private bool m_isMoving;
 
         private void Awake()
@@ -57,11 +49,6 @@ namespace AwesomeCompany.Tatedrez.Gameplay
         {
             m_shape.color = color;
         }
-        
-        public bool IsValidPosition(Vector2Int gridPosition)
-        {
-            return BoardGrid == null || m_validPositions.Count == 0 || m_validPositions.Contains(gridPosition);
-        }
 
 
         public void SetDraggable(bool isDraggable)
@@ -78,24 +65,22 @@ namespace AwesomeCompany.Tatedrez.Gameplay
         {
             if (MoveTo(m_restartPosition, onFinished))
             {
-                GridPosition = default;
-                BoardGrid = null;
+                m_boardController = default;
             }
             return false;
         }
         
-        public bool MoveTo(BoardGrid boardGrid, Vector2Int gridPosition, Action onFinished = null)
+        public bool MoveTo(BoardController boardController, Vector2Int gridPosition, Action onFinished = null)
         {
-            if(boardGrid.CanPlaceElement(this, gridPosition))
+            if(boardController.CanPlacePiece(this, gridPosition))
             {
-                BoardGrid = boardGrid;
-                UICell uiCell = FindObjectsOfType<UICell>().FirstOrDefault(o => o.GridPositions == gridPosition);
-                if (uiCell)
+                m_boardController = boardController;
+                BoardCell boardCell = FindObjectsOfType<BoardCell>().FirstOrDefault(o => o.GridPositions == gridPosition);
+                if (boardCell)
                 {
-                    return MoveTo(uiCell.transform.position, () =>
+                    return MoveTo(boardCell.transform.position, () =>
                     {
-                        BoardGrid.TryPlaceElement(this, gridPosition);
-                        Debug.Log(this + " " + GridPosition);
+                        m_boardController.TryToPlacePiece(this, gridPosition);
                         onFinished?.Invoke();
                     });
                 }
@@ -136,10 +121,10 @@ namespace AwesomeCompany.Tatedrez.Gameplay
 
         private void UpdateValidPositions()
         {
-            m_validPositions.Clear();
-            if (BoardGrid != null)
+            m_reusableValidPositions.Clear();
+            if (m_boardController != null)
             {
-                m_pieceData.PopulateWithValidMoves(BoardGrid, GridPosition, m_validPositions);
+                m_pieceData.PopulateWithValidMoves(m_boardController, GridPosition, m_reusableValidPositions);
             }
         }
         

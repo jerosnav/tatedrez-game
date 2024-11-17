@@ -8,13 +8,13 @@ namespace AwesomeCompany.Tatedrez.Data
     [CreateAssetMenu(menuName = "Game/Data/Piece/Rook", fileName = "Rook", order = 1)]
     public class RookPieceData : PieceData
     {
-        public override void PopulateWithValidMoves(BoardGrid boardGrid, Vector2Int gridPosition,
+        public override void PopulateWithValidMoves(BoardController boardController, Vector2Int gridPosition,
             List<Vector2Int> validMoves)
         {
-            AIGridHelper.PopulateWithValidPositionsWithLinearDirection(boardGrid, gridPosition, Vector2Int.right, validMoves);
-            AIGridHelper.PopulateWithValidPositionsWithLinearDirection(boardGrid, gridPosition, Vector2Int.down, validMoves);
-            AIGridHelper.PopulateWithValidPositionsWithLinearDirection(boardGrid, gridPosition, Vector2Int.left, validMoves);
-            AIGridHelper.PopulateWithValidPositionsWithLinearDirection(boardGrid, gridPosition, Vector2Int.up, validMoves);
+            AIBoardGridHelper.PopulateWithValidPositionsWithLinearDirection(boardController, gridPosition, Vector2Int.right, validMoves);
+            AIBoardGridHelper.PopulateWithValidPositionsWithLinearDirection(boardController, gridPosition, Vector2Int.down, validMoves);
+            AIBoardGridHelper.PopulateWithValidPositionsWithLinearDirection(boardController, gridPosition, Vector2Int.left, validMoves);
+            AIBoardGridHelper.PopulateWithValidPositionsWithLinearDirection(boardController, gridPosition, Vector2Int.up, validMoves);
         }
 
         

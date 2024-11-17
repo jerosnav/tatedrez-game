@@ -22,11 +22,11 @@ namespace AwesomeCompany.Tatedrez.Data
             new Vector2Int(-2, -1),
         };
         
-        public override void PopulateWithValidMoves(BoardGrid boardGrid, Vector2Int gridPosition,
+        public override void PopulateWithValidMoves(BoardController boardController, Vector2Int gridPosition,
             List<Vector2Int> validMoves)
         {
             
-            AIGridHelper.PopulateWithValidPositionsWithPositionArray(boardGrid, gridPosition, s_checkPositions, validMoves);
+            AIBoardGridHelper.PopulateWithValidPositionsWithPositionArray(boardController, gridPosition, s_checkPositions, validMoves);
         }
     }
 }

@@ -1,21 +1,25 @@
+using System;
 using AwesomeCompany.Tatedrez.Core;
+using AwesomeCompany.Tatedrez.Gameplay;
+using AwesomeCompany.Tatedrez.GridSystem;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-namespace AwesomeCompany.Tatedrez.UI
+namespace AwesomeCompany.Tatedrez. Core
 {
-    public class UICell : MonoBehaviour, IDropHandler
+    public class BoardCell : MonoBehaviour, IDropHandler
     {
         [SerializeField] private Vector2Int m_gridPosition;
         [SerializeField] private Image m_image;
-        [SerializeField] private UIBoardWidget m_uiBoardWidget;
+        [SerializeField] private BoardController m_boardController;
 
         public Vector2Int GridPositions => m_gridPosition;
 
-        public void Setup(UIBoardWidget uiBoardWidget, Vector2Int gridPosition, Color color)
+        public void Setup(BoardController boardController, Vector2Int gridPosition, Color color)
         {
-            m_uiBoardWidget = uiBoardWidget;
+            m_boardController = boardController;
             m_gridPosition = gridPosition;
             m_image.color = color;
         }
@@ -23,9 +27,9 @@ namespace AwesomeCompany.Tatedrez.UI
         public void OnDrop(PointerEventData eventData)
         {
             if (eventData.pointerDrag
-                && eventData.pointerDrag.TryGetComponent(out ICellElement cellElement))
+                && eventData.pointerDrag.TryGetComponent(out PieceDragHandler pieceDragHandler))
             {
-                if (GameManager.Instance.BoardGrid.TryPlaceElement(cellElement, m_gridPosition))
+                if (m_boardController.TryToPlacePiece(pieceDragHandler, m_gridPosition))
                 {
                     eventData.pointerDrag.transform.position = transform.position;
                     eventData.Use();

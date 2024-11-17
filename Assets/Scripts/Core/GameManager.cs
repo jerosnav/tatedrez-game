@@ -13,19 +13,18 @@ namespace AwesomeCompany.Tatedrez.Core
 
     public class GameManager : MonoBehaviour
     {
-        [SerializeField] private BoardData m_boardData;
-        
+        [SerializeField] private BoardController m_boardController;
         [SerializeField] private List<PlayerInteractionHandler> m_playerInteractionHandlers 
             = new List<PlayerInteractionHandler>();
 
         public static GameManager Instance { get; private set; }
+        public BoardController BoardController => m_boardController;
 
         public static event Action<PlayerInteractionHandler> OnPlayerActiveUpdated;
         public static event Action<PlayerData> OnPlayerWin;
 
         private int m_activePlayer = -1;
-
-        public BoardGrid BoardGrid { get; private set; }
+        
 
         private void Awake()
         {
@@ -40,17 +39,17 @@ namespace AwesomeCompany.Tatedrez.Core
 
         private IEnumerator Start()
         {
-            BoardGrid = new BoardGrid(m_boardData.GridSize.x, m_boardData.GridSize.y);
-            BoardGrid.OnBoardUpdatedEvent += BoardGridOnOnBoardUpdatedEvent;
+            yield return new WaitUntil(() => m_boardController);
+            m_boardController.OnBoardUpdatedEvent += BoardGridOnOnBoardUpdatedEvent;
             yield return new WaitUntil(() =>
                 m_playerInteractionHandlers.Count >= 2
                 && m_playerInteractionHandlers.TrueForAll(o => o.IsReady));
             StartNewGame();
         }
 
-        private void BoardGridOnOnBoardUpdatedEvent(BoardGrid boardGrid)
+        private void BoardGridOnOnBoardUpdatedEvent(BoardController boardController)
         {
-            if (AIGridHelper.CheckWinCondition(boardGrid, out PlayerData winner))
+            if ( boardController.CheckWinCondition(out PlayerData winner))
             {
                 OnPlayerWin?.Invoke(winner);
                 SetActivePlayer(-1);
@@ -65,9 +64,14 @@ namespace AwesomeCompany.Tatedrez.Core
             }
         }
 
+        public void RegisterBoardController(BoardController boardController)
+        {
+            m_boardController = boardController;
+        }
+
         public void StartNewGame()
         {
-            BoardGrid.ClearBoard();
+            m_boardController.ClearBoard();
             SetActivePlayer(-1);
             int waitingCount = m_playerInteractionHandlers.Count;
             for (int i = 0; i < m_playerInteractionHandlers.Count; i++)
@@ -135,11 +139,11 @@ namespace AwesomeCompany.Tatedrez.Core
                 possibleMovesByPiece.Clear();
                 if (allPiecesOnBoard)
                 {
-                    pieceDragHandler.PieceData.PopulateWithValidMoves(BoardGrid, pieceDragHandler.GridPosition, possibleMovesByPiece);
+                    pieceDragHandler.Data.PopulateWithValidMoves(m_boardController, pieceDragHandler.GridPosition, possibleMovesByPiece);
                 }
-                else if(pieceDragHandler.BoardGrid == null) // take only pieces not on board
+                else if(!pieceDragHandler.IsPlacedOnBoard) // take only pieces not on board
                 {
-                    AIGridHelper.PopulateWithAllFreePositions(BoardGrid, possibleMovesByPiece);
+                    AIBoardGridHelper.PopulateWithAllFreePositions(m_boardController, possibleMovesByPiece);
                 }
                 yield return null;
             }
@@ -167,7 +171,7 @@ namespace AwesomeCompany.Tatedrez.Core
             // Just get a random valid movement
             int randIdx = Random.Range(0, m_reusableFlattenPossibleMovesByPiece.Count);
             var randMove = m_reusableFlattenPossibleMovesByPiece[randIdx];
-            randMove.Key.MoveTo(BoardGrid, randMove.Value, EndPlayerTurn);
+            randMove.Key.MoveTo(m_boardController, randMove.Value, EndPlayerTurn);
         }
     }
 }

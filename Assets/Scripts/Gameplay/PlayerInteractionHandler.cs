@@ -53,7 +53,7 @@ namespace AwesomeCompany.Tatedrez.Gameplay
 
         public bool AllPiecesOnBoard()
         {
-            return m_pieces.All(piece => piece.BoardGrid != null);
+            return m_pieces.All(piece => piece.IsPlacedOnBoard);
         }
 
         public void EnablePlayerControl(bool enableControl)
@@ -64,7 +64,7 @@ namespace AwesomeCompany.Tatedrez.Gameplay
             for (int i = 0; i < m_pieces.Length; i++)
             {
                 PieceDragHandler piece = m_pieces[i];
-                if (piece.BoardGrid == null)
+                if (!piece.IsPlacedOnBoard)
                 {
                     // piece is not in the board yet
                     piece.SetDraggable(enableControl);

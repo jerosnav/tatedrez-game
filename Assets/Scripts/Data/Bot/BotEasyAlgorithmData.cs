@@ -8,12 +8,12 @@ namespace AwesomeCompany.Tatedrez.Data
     [CreateAssetMenu(menuName = "Game/Data/Bot Easy Data", fileName = "Bot Easy Data", order = 1)]
     public class BotEasyAlgorithmData : BotAlgorithmData
     {
-        public override Vector2Int ChooseNextMoveTicTacToeStage(BoardGrid boardGrid, PlayerData playerData)
+        public override Vector2Int ChooseNextMoveTicTacToeStage(BoardController boardGrid, PlayerData playerData)
         {
             throw new System.NotImplementedException();
         }
 
-        public override Vector2Int ChooseNextMoveChessStage(BoardGrid boardGrid, PlayerData playerData)
+        public override Vector2Int ChooseNextMoveChessStage(BoardController boardGrid, PlayerData playerData)
         {
             throw new System.NotImplementedException();
         }
