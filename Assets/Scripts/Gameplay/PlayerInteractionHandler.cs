@@ -20,6 +20,8 @@ namespace AwesomeCompany.Tatedrez.Gameplay
         public PlayerData PlayerData => m_playerData;
         public IEnumerable<PieceDragHandler> Pieces => m_pieces;
 
+        private List<Vector2Int> m_reusablePossibleMoves = new List<Vector2Int>();
+
         private void OnValidate()
         {
             UpdateVisuals();
@@ -54,6 +56,20 @@ namespace AwesomeCompany.Tatedrez.Gameplay
         public bool AllPiecesOnBoard()
         {
             return m_pieces.All(piece => piece.IsPlacedOnBoard);
+        }
+
+        public bool CanMoveAnyPiece()
+        {
+            if (!AllPiecesOnBoard()) return true;
+            for (int i = 0; i < m_pieces.Length; i++)
+            {
+                m_reusablePossibleMoves.Clear();
+                PieceDragHandler pieceDragHandler = m_pieces[i];
+                pieceDragHandler.Data.PopulateWithValidMoves(GameManager.Instance.BoardController, pieceDragHandler.GridPosition, m_reusablePossibleMoves);
+                if (m_reusablePossibleMoves.Count > 0) return true;
+            }
+
+            return false;
         }
 
         public void EnablePlayerControl(bool enableControl)

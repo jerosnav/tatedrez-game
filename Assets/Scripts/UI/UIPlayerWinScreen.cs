@@ -6,50 +6,53 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIPlayerWinScreen : MonoBehaviour
+namespace AwesomeCompany.Tatedrez.UI
 {
-    [SerializeField] private TextMeshProUGUI m_winnerText;
-    [SerializeField] private TextMeshProUGUI m_continueText;
-
-    private const string PLAYER_WINNER_TEXT = "Player {0} Wins!!!";
-    
-    private void Awake()
+    public class UIPlayerWinScreen : MonoBehaviour
     {
-        GameManager.OnPlayerWin += playerData =>
+        [SerializeField] private TextMeshProUGUI m_winnerText;
+        [SerializeField] private TextMeshProUGUI m_continueText;
+
+        private const string PLAYER_WINNER_TEXT = "Player {0} Wins!!!";
+
+        private void Awake()
         {
-            gameObject.SetActive(true);
-            if (playerData)
+            GameManager.OnPlayerWin += playerData =>
             {
-                m_winnerText.text = string.Format(PLAYER_WINNER_TEXT, playerData.PlayerName);
-                m_winnerText.color = playerData.PlayerColor;
-            }
-            else
-            {
-                m_winnerText.text = "The Game is a Tie";
-                m_winnerText.color = Color.gray;
-            }
-        };
-        gameObject.SetActive(false);
-    }
+                gameObject.SetActive(true);
+                if (playerData)
+                {
+                    m_winnerText.text = string.Format(PLAYER_WINNER_TEXT, playerData.PlayerName);
+                    m_winnerText.color = playerData.PlayerColor;
+                }
+                else
+                {
+                    m_winnerText.text = "The Game is a Tie";
+                    m_winnerText.color = Color.gray;
+                }
+            };
+            gameObject.SetActive(false);
+        }
 
-    private void OnEnable()
-    {
-        StartCoroutine(PressToContinueCo());
-    }
+        private void OnEnable()
+        {
+            StartCoroutine(PressToContinueCo());
+        }
 
-    private IEnumerator PressToContinueCo()
-    {
-        m_continueText.enabled = false;
-        GetComponent<Button>().enabled = false;
-        yield return new WaitForSeconds(2f);
-        m_continueText.enabled = true;
-        GetComponent<Button>().enabled = true;
-    }
+        private IEnumerator PressToContinueCo()
+        {
+            m_continueText.enabled = false;
+            GetComponent<Button>().enabled = false;
+            yield return new WaitForSeconds(2f);
+            m_continueText.enabled = true;
+            GetComponent<Button>().enabled = true;
+        }
 
 
-    public void OnContinueButtonPressed()
-    {
-        GameManager.Instance.StartNewGame();
-        gameObject.SetActive(false);
+        public void OnContinueButtonPressed()
+        {
+            GameManager.Instance.StartNewGame();
+            gameObject.SetActive(false);
+        }
     }
 }

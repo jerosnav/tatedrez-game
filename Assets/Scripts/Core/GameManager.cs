@@ -50,7 +50,6 @@ namespace AwesomeCompany.Tatedrez.Core
 
         private void BoardGridOnOnBoardUpdatedEvent(BoardController boardController)
         {
-            boardController.DebugBoardData();
             if ( boardController.CheckWinCondition(out PlayerData winner))
             {
                 OnPlayerWin?.Invoke(winner);
@@ -109,14 +108,29 @@ namespace AwesomeCompany.Tatedrez.Core
 
             if (m_activePlayer >= 0)
             {
-                if (m_playerInteractionHandlers[m_activePlayer].PlayerData.BotAlgorithm)
+                var activePlayer = m_playerInteractionHandlers[m_activePlayer];
+                if (activePlayer.CanMoveAnyPiece())
                 {
-                    StartCoroutine(PlayBotMovementCo());
+                    if (activePlayer.PlayerData.BotAlgorithm)
+                    {
+                        StartCoroutine(PlayBotMovementCo());
+                    }
+
+                    activePlayer.EnablePlayerControl(true);
                 }
-                m_playerInteractionHandlers[m_activePlayer].EnablePlayerControl(true);
+                else
+                {
+                    StartCoroutine(DelayedEndTurn(1f));
+                }
             }
 
             OnPlayerActiveUpdated?.Invoke(m_activePlayer >= 0 ? m_playerInteractionHandlers[m_activePlayer] : null);
+        }
+
+        IEnumerator DelayedEndTurn(float time)
+        {
+            yield return new WaitForSeconds(time);
+            EndPlayerTurn();
         }
         
         IEnumerator PlayBotMovementCo()
