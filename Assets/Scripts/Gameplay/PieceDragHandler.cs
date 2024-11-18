@@ -116,7 +116,7 @@ namespace AwesomeCompany.Tatedrez.Gameplay
 
         public void OnDrag(PointerEventData eventData)
         {
-            transform.position = eventData.position;
+            transform.position = eventData.position + (Application.isEditor? Vector3.zero : Vector2.up * 80);
         }
 
         public void OnEndDrag(PointerEventData eventData)
@@ -130,12 +130,13 @@ namespace AwesomeCompany.Tatedrez.Gameplay
         
         private IEnumerator MoveToPositionCo(Vector3 position, Action onFinished)
         {
+            transform.SetAsLastSibling();
             float dist;
             do
             {
-                transform.position = Vector3.Lerp(transform.position, position, Time.fixedDeltaTime * 5f);
+                transform.position = Vector3.Lerp(transform.position, position, 0.30f);
                 dist = Vector3.Distance(transform.position, position);
-                yield return null;
+                yield return new WaitForFixedUpdate();
             } while (dist > 0.01f);
             transform.position = position;
 

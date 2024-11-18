@@ -58,6 +58,10 @@ namespace AwesomeCompany.Tatedrez.Gameplay
 
         public void EnablePlayerControl(bool enableControl)
         {
+            if (enableControl)
+            {
+                transform.SetAsLastSibling();
+            }
             if (m_playerData.BotAlgorithm && enableControl) return;
             
             bool allPiecesAreOnBoard = AllPiecesOnBoard();
@@ -74,11 +78,6 @@ namespace AwesomeCompany.Tatedrez.Gameplay
                     // piece is in the board
                     piece.SetDraggable(enableControl && allPiecesAreOnBoard);
                 }
-            }
-
-            if (enableControl)
-            {
-                transform.SetAsLastSibling();
             }
         }
 

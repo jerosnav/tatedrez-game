@@ -113,10 +113,7 @@ namespace AwesomeCompany.Tatedrez.Core
                 {
                     StartCoroutine(PlayBotMovementCo());
                 }
-                else
-                {
-                    m_playerInteractionHandlers[m_activePlayer].EnablePlayerControl(true);
-                }
+                m_playerInteractionHandlers[m_activePlayer].EnablePlayerControl(true);
             }
 
             OnPlayerActiveUpdated?.Invoke(m_activePlayer >= 0 ? m_playerInteractionHandlers[m_activePlayer] : null);
