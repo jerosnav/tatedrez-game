@@ -8,6 +8,8 @@ Due to time constraints, I did not implement unit tests. Instead, I developed a 
 
 I thoroughly tested the game to prevent bugs. However, I discovered a potential softlock issue when a knight is placed at the center of the grid.
 
+<img width="320" alt="image" src="illustrations/2024-11-18_19-30-51.png">
+
 
 # Code Structure:
 
