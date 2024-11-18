@@ -121,64 +121,27 @@ namespace AwesomeCompany.Tatedrez.Core
 
             OnPlayerActiveUpdated?.Invoke(m_activePlayer >= 0 ? m_playerInteractionHandlers[m_activePlayer] : null);
         }
-
-        private Dictionary<PieceDragHandler, List<Vector2Int>> m_reusablePossibleMovesDic =
-            new Dictionary<PieceDragHandler, List<Vector2Int>>();
-
-        private List<KeyValuePair<PieceDragHandler, Vector2Int>> m_reusableFlattenPossibleMovesByPiece =
-            new List<KeyValuePair<PieceDragHandler, Vector2Int>>();
+        
         IEnumerator PlayBotMovementCo()
         {
             PlayerInteractionHandler botPlayer = m_playerInteractionHandlers[m_activePlayer];
-            bool allPiecesOnBoard = botPlayer.AllPiecesOnBoard();
-            foreach (var pieceDragHandler in botPlayer.Pieces)
+            BotAlgorithmData.PieceMove bestPieceMove = default;
+            yield return botPlayer.PlayerData.BotAlgorithm.CalculateBestMoveCo(m_boardController, botPlayer, pieceMove =>
             {
-                if (!m_reusablePossibleMovesDic.TryGetValue(pieceDragHandler,
-                        out List<Vector2Int> possibleMovesByPiece))
-                {
-                    possibleMovesByPiece = m_reusablePossibleMovesDic[pieceDragHandler] = new List<Vector2Int>();
-                }
-                possibleMovesByPiece.Clear();
-                if (allPiecesOnBoard)
-                {
-                    pieceDragHandler.Data.PopulateWithValidMoves(m_boardController, pieceDragHandler.GridPosition, possibleMovesByPiece);
-                }
-                else if(!pieceDragHandler.IsPlacedOnBoard) // take only pieces not on board
-                {
-                    AIBoardGridHelper.PopulateWithAllFreePositions(m_boardController, possibleMovesByPiece);
-                }
-                yield return null;
-            }
+                bestPieceMove = pieceMove;
+            });
             
             yield return new WaitForSeconds(1f);
-
-            m_reusableFlattenPossibleMovesByPiece.Clear();
-            m_reusableFlattenPossibleMovesByPiece.AddRange(m_reusablePossibleMovesDic
-                .SelectMany(kvp =>
-                    kvp.Value.Select(move => new KeyValuePair<PieceDragHandler, Vector2Int>(kvp.Key, move))));
-
-            Debug.Log("---- All Possible Bot Moves ----");
-            foreach (var kvp in m_reusablePossibleMovesDic)
+            
+            if (bestPieceMove.IsValid())
             {
-                StringBuilder sb = new StringBuilder(kvp.Key.Data.name + ": ");
-                foreach (var pos in kvp.Value)
-                {
-                    sb.Append(pos + ", ");
-                }
-                Debug.Log(sb.ToString());
+                bestPieceMove.pieceDragHandler.MoveTo(m_boardController, bestPieceMove.moveTo, EndPlayerTurn);
             }
-
-            // Check if no movement is possible and in that case ends with a tie.
-            if (m_reusableFlattenPossibleMovesByPiece.Count == 0)
+            else
             {
                 OnPlayerWin?.Invoke(null);
-                yield break;
             }
             
-            // Just get a random valid movement
-            int randIdx = Random.Range(0, m_reusableFlattenPossibleMovesByPiece.Count);
-            var randMove = m_reusableFlattenPossibleMovesByPiece[randIdx];
-            randMove.Key.MoveTo(m_boardController, randMove.Value, EndPlayerTurn);
         }
     }
 }
