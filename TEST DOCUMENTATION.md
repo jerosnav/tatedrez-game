@@ -1,3 +1,14 @@
+# Strategy Overview
+
+I aimed to create straightforward code that incorporates essential design patterns. In the data section, I modularized implementations that can later be applied to gameplay elements like the Piece, including Player Data, Piece Data, Bot algorithms, etc. This approach decouples these elements from MonoBehaviour, facilitating easy plug-and-play functionality.
+
+In some instances, I utilized `OnValidate` to demonstrate how changes in MonoBehaviour data automatically update visuals. Typically, I use `[OnValueChanged]` from NaughtyAttributes or the Odin plugin. However, for this test, I opted for `OnValidate` to avoid external plugins.
+
+Due to time constraints, I did not implement unit tests. Instead, I developed a simple algorithm for a bot that selects a random move from all possible options. My plan was to introduce a medium difficulty level by assigning scores to each move.
+
+I thoroughly tested the game to prevent bugs. However, I discovered a potential softlock issue when a knight is placed at the center of the grid.
+
+
 # Code Structure:
 
 * **Core:**
